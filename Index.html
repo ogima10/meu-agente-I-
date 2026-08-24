@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agente de Agendamento</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="bot-info">
+                <div class="avatar">🤖</div>
+                <div>
+                    <h3>Atendente Virtual</h3>
+                    <p>Online</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+                Olá! Sou o seu assistente virtual. Vamos agendar o seu horário? Por favor, digite seu **nome** e o **dia desejado**.
+            </div>
+        </div>
+        
+        <div class="chat-input-area">
+            <input type="text" id="userInput" placeholder="Digite sua mensagem..." autocomplete="off">
+            <button id="sendBtn">Enviar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
