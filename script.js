@@ -1,16 +1,35 @@
+// ==========================================
+// CONFIGURAÇÃO DO AGENTE
+// ==========================================
+const CONFIG = {
+    nomeBot: "Atendente Virtual",     
+    numeroWhatsApp: "5519999946371", // Seu número correto salvos com aspas e sem espaços
+    
+    perguntas: [
+        "Olá! Seja bem-vindo(a). Para iniciarmos seu agendamento, por favor, digite seu **Nome Completo**:",
+        "Perfeito! Agora digite o **Serviço ou Procedimento** que você deseja realizar:",
+        "E para finalizar, qual o **Melhor Dia e Horário** para você?"
+    ],
+    
+    textoSucesso: "Perfeito! Seus dados foram salvos temporariamente pelo assistente.",
+    textoInstrucaoBotao: "Clique no botão abaixo para enviar os detalhes diretamente para o nosso WhatsApp e garantir sua vaga!"
+};
+
+// ==========================================
+// MOTOR DO CHAT
+// ==========================================
 const chatMessages = document.getElementById('chatMessages');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 
-// Configuração do seu número de WhatsApp (DDD + Número)
-const SEU_NUMERO_WHATSAPP = "5519999946371"; 
+document.getElementById('botNome').innerText = CONFIG.nomeBot;
 
 let passo = 0;
-let dadosAgendamento = {
-    nome: "",
-    data: "",
-    servico: ""
-};
+let respostasUsuario = [];
+
+setTimeout(() => {
+    adicionarMensagem(CONFIG.perguntas[0], 'bot');
+}, 500);
 
 sendBtn.addEventListener('click', enviarMensagem);
 userInput.addEventListener('keypress', (e) => {
@@ -21,57 +40,54 @@ function enviarMensagem() {
     const texto = userInput.value.trim();
     if (texto === "") return;
 
-    // Adiciona mensagem do usuário na tela
     adicionarMensagem(texto, 'user');
     userInput.value = "";
+    respostasUsuario.push(texto);
 
-    // Processa a resposta da "IA" baseada no fluxo
     setTimeout(() => {
-        processarFluxo(texto);
+        passo++;
+        processarProximoPasso();
     }, 800);
 }
 
 function adicionarMensagem(texto, remetente) {
     const msgDiv = document.createElement('div');
     msgDiv.classList.add('message', remetente);
-    msgDiv.innerText = texto;
+    msgDiv.innerHTML = texto.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     chatMessages.appendChild(msgDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-function processarFluxo(texto) {
-    if (passo === 0) {
-        dadosAgendamento.nome = texto;
-        adicionarMensagem(`Prazer, ${dadosAgendamento.nome}! Qual serviço você deseja agendar? (Ex: Consulta, Corte de Cabelo, Manutenção)`, 'bot');
-        passo = 1;
-    } else if (passo === 1) {
-        dadosAgendamento.servico = texto;
-        adicionarMensagem(`Ótimo! E qual o melhor dia e horário para você?`, 'bot');
-        passo = 2;
-    } else if (passo === 2) {
-        dadosAgendamento.data = texto;
+function processarProximoPasso() {
+    if (passo < CONFIG.perguntas.length) {
+        adicionarMensagem(CONFIG.perguntas[passo], 'bot');
+    } else if (passo === CONFIG.perguntas.length) {
+        let resumo = "<strong>Resumo do Agendamento:</strong><br><br>";
+        CONFIG.perguntas.forEach((pergunta, index) => {
+            const label = pergunta.match(/\*\*(.*?)\*\*/)?.[1] || `Dado ${index + 1}`;
+            resumo += `• <strong>${label}:</strong> ${respostasUsuario[index]}<br>`;
+        });
+
+        adicionarMensagem(CONFIG.textoSucesso, 'bot');
+        adicionarMensagem(resumo, 'bot');
         
-        // Mensagem de confirmação
-        adicionarMensagem(`Perfeito! Confirmando: \n\n• Nome: ${dadosAgendamento.nome}\n• Serviço: ${dadosAgendamento.servico}\n• Data/Hora: ${dadosAgendamento.data}`, 'bot');
-        
-        // Criação do link do WhatsApp
         setTimeout(() => {
-            const textoWhatsapp = encodeURIComponent(`Olá! Gostaria de confirmar meu agendamento:\nNome: ${dadosAgendamento.nome}\nServiço: ${dadosAgendamento.servico}\nData: ${dadosAgendamento.data}`);
-            const linkWhatsapp = `https://wa.me{55 19 999946371 }?text=${textoWhatsapp}`;
+            adicionarMensagem(CONFIG.textoInstrucaoBotao, 'bot');
             
-            adicionarMensagem(`Clique no botão abaixo para enviar o agendamento para o nosso WhatsApp e finalizar!`, 'bot');
+            let textoFormatadoWhats = `Olá! Gostaria de confirmar meu agendamento:\n\n`;
+            CONFIG.perguntas.forEach((pergunta, index) => {
+                const label = pergunta.match(/\*\*(.*?)\*\*/)?.[1] || `Dado ${index + 1}`;
+                textoFormatadoWhats += `*${label}:* ${respostasUsuario[index]}\n`;
+            });
+
+            const linkFinal = `https://wa.me{CONFIG.numeroWhatsApp}?text=${encodeURIComponent(textoFormatadoWhats)}`;
             
-            // Cria um botão real de clique dentro do chat
-            const btnWhats = document.createElement('a');
-            btnWhats.href = linkWhatsapp;
-            btnWhats.target = "_blank";
-            btnWhats.innerText = "Confirmar no WhatsApp 🟢";
-            btnWhats.style = "display: inline-block; background: #25d366; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; margin-top: 10px; font-weight: bold; text-align: center;";
+            const btnWhats = document.getElementById('whatsappBtnNativo');
+            btnWhats.href = linkFinal;
+            btnWhats.style.display = "flex"; // Revela o botão escondido
             
             chatMessages.appendChild(btnWhats);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }, 1000);
-        
-        passo = 3; // Fim do fluxo básico
     }
 }
