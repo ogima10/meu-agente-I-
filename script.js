@@ -3,7 +3,7 @@ const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 
 // Configuração do seu número de WhatsApp (DDD + Número)
-const SEU_NUMERO_WHATSAPP = "5511999999999"; 
+const SEU_NUMERO_WHATSAPP = "5519999946371"; 
 
 let passo = 0;
 let dadosAgendamento = {
