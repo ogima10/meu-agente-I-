@@ -3,31 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agente de Agendamento</title>
+    <title>WhatsApp Agendamentos</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Ícones oficiais para o visual do WhatsApp -->
+    <link href="https://googleapis.com" rel="stylesheet">
 </head>
 <body>
 
-    <div class="chat-container">
+    <div class="whatsapp-container">
+        <!-- Cabeçalho do WhatsApp -->
         <div class="chat-header">
-            <div class="bot-info">
-                <div class="avatar">🤖</div>
-                <div>
-                    <h3>Atendente Virtual</h3>
-                    <p>Online</p>
+            <div class="user-info">
+                <div class="avatar-container">
+                    <img src="https://unsplash.com" id="botAvatar" alt="Foto de Perfil">
+                </div>
+                <div class="status-container">
+                    <h3 id="botNome">Atendimento</h3>
+                    <span class="status">online</span>
                 </div>
             </div>
-        </div>
-        
-        <div class="chat-messages" id="chatMessages">
-            <div class="message bot">
-                Olá! Sou o seu assistente virtual. Vamos agendar o seu horário? Por favor, digite seu **nome** e o **dia desejado**.
+            <div class="header-icons">
+                <span class="material-icons">videocam</span>
+                <span class="material-icons">call</span>
+                <span class="material-icons">more_vert</span>
             </div>
         </div>
         
+        <!-- Área de mensagens com o fundo clássico -->
+        <div class="chat-messages" id="chatMessages">
+            <div class="crypto-notice">
+                🔒 As mensagens são protegidas e criptografadas. Este é um assistente virtual comercial.
+            </div>
+            
+            <!-- Botão fixo do WhatsApp (inicia escondido) -->
+            <a href="#" id="whatsappBtnNativo" target="_blank" class="whatsapp-btn" style="display: none;">
+                Enviar para o WhatsApp
+            </a>
+        </div>
+        
+        <!-- Barra de digitação -->
         <div class="chat-input-area">
-            <input type="text" id="userInput" placeholder="Digite sua mensagem..." autocomplete="off">
-            <button id="sendBtn">Enviar</button>
+            <span class="material-icons icon-btn">sentiment_satisfied_alt</span>
+            <span class="material-icons icon-btn">attach_file</span>
+            <input type="text" id="userInput" placeholder="Digite uma mensagem" autocomplete="off">
+            <button id="sendBtn">
+                <span class="material-icons">send</span>
+            </button>
         </div>
     </div>
 
